@@ -1,6 +1,8 @@
 spring:
   config:
-    import: optional:classpath:application-secret.yml
+    import:
+      - optional:classpath:application-secret.yml
+      - optional:classpath:application-oauth-kakao.yml
 
   #데이터베이스 연결 설정
   datasource:
