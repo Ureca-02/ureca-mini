@@ -131,7 +131,7 @@ class FriendServiceTest {
         );
 
         // when
-        boolean result = friendService.deleteFriend(accepted.getId());
+        boolean result = friendService.deleteFriend(accepted.getId(), userB.getId());
 
         // then
         assertThat(result).isTrue();

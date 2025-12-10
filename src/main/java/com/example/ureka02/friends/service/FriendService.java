@@ -4,6 +4,10 @@ import com.example.ureka02.friends.domain.Friendship;
 import com.example.ureka02.friends.domain.FriendStatus;
 import com.example.ureka02.friends.dto.response.FriendResponse;
 import com.example.ureka02.friends.repository.FriendRepository;
+import com.example.ureka02.global.common.ResponseDto;
+import com.example.ureka02.global.error.CommonException;
+import com.example.ureka02.global.error.ErrorCode;
+import com.example.ureka02.global.error.ExceptionDto;
 import com.example.ureka02.user.User;
 import com.example.ureka02.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -24,30 +28,30 @@ public class FriendService {
     public FriendResponse sendFriendRequest(Long senderId, Long receiverId) {
 
         if (senderId.equals(receiverId)) {
-            throw new IllegalArgumentException("자기 자신에게 친구 요청을 보낼 수 없습니다.");
+            throw new CommonException(ErrorCode.FRIEND_REQUEST_SELF);
         }
 
-        // 기존 요청 존재 여부 확인
+        // 기존 요청 존재 확인
         Optional<Friendship> existing =
                 friendRepository.findBySender_IdAndReceiver_Id(senderId, receiverId);
 
         if (existing.isPresent()) {
-            throw new IllegalStateException("이미 친구 요청이 존재합니다.");
+            throw new CommonException(ErrorCode.FRIEND_REQUEST_ALREADY_EXISTS);
         }
 
-        // 반대 방향 요청 또는 친구 여부 확인
+        // 반대 방향 요청 또는 이미 친구 여부 확인
         Optional<Friendship> reverse =
                 friendRepository.findBySender_IdAndReceiver_Id(receiverId, senderId);
 
         if (reverse.isPresent()) {
-            throw new IllegalStateException("이미 친구 관계이거나 요청이 반대로 존재합니다.");
+            throw new CommonException(ErrorCode.FRIEND_REQUEST_REVERSE_EXISTS);
         }
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("요청자 정보 없음"));
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
 
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new IllegalArgumentException("수신자 정보 없음"));
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
 
         Friendship friendship = Friendship.builder()
                 .sender(sender)
@@ -70,24 +74,23 @@ public class FriendService {
     // 3. 친구 요청 수락
     public boolean acceptFriendRequest(Long friendshipId, Long receiverId) {
         Friendship friendship = friendRepository.findById(friendshipId)
-                .orElseThrow(() -> new IllegalArgumentException("요청 정보 없음"));
+                .orElseThrow(() -> new CommonException(ErrorCode.FRIEND_REQUEST_NOT_FOUND));
 
         if (!friendship.getReceiver().getId().equals(receiverId)) {
-            throw new IllegalStateException("해당 요청을 수락할 권한이 없습니다.");
+            throw new CommonException(ErrorCode.FRIEND_ACCEPT_FORBIDDEN);
         }
 
         friendship.setStatus(FriendStatus.ACCEPTED);
         return true;
     }
 
-    // 4. 친구 요청 거절 (삭제)
+    // 4. 친구 요청 거절
     public boolean rejectFriendRequest(Long friendshipId, Long receiverId) {
-
         Friendship friendship = friendRepository.findById(friendshipId)
-                .orElseThrow(() -> new IllegalArgumentException("요청 정보 없음"));
+                .orElseThrow(() -> new CommonException(ErrorCode.FRIEND_REQUEST_NOT_FOUND));
 
         if (!friendship.getReceiver().getId().equals(receiverId)) {
-            throw new IllegalStateException("해당 요청을 거절할 권한이 없습니다.");
+            throw new CommonException(ErrorCode.FRIEND_REJECT_FORBIDDEN);
         }
 
         friendRepository.delete(friendship);
@@ -103,7 +106,15 @@ public class FriendService {
     }
 
     // 6. 친구 삭제
-    public boolean deleteFriend(Long reqId) {
+    public boolean deleteFriend(Long reqId, Long userId) {
+        FriendResponse request = friendRepository.findById(reqId)
+                .map(FriendResponse::new)
+                .orElseThrow(() -> new CommonException(ErrorCode.FRIEND_REQUEST_NOT_FOUND));
+
+        if (!request.getReceiverId().equals(userId)) {
+            throw new CommonException(ErrorCode.FRIEND_DELETE_FORBIDDEN);
+        }
+
         friendRepository.deleteById(reqId);
         return true;
     }
