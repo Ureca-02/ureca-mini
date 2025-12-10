@@ -32,7 +32,21 @@ public enum ErrorCode {
     DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "E409001", "이미 존재하는 리소스입니다."),
 
     // 500 INTERNAL SERVER ERROR
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500001", "서버 내부 오류가 발생했습니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E500001", "서버 내부 오류가 발생했습니다."),
+
+
+    //friends
+    FRIEND_REQUEST_SELF(HttpStatus.BAD_REQUEST, "F400001", "자기 자신에게 친구 요청을 보낼 수 없습니다."),
+    FRIEND_REQUEST_ALREADY_EXISTS(HttpStatus.CONFLICT, "F409001", "이미 친구 요청이 존재합니다."),
+    FRIEND_REQUEST_REVERSE_EXISTS(HttpStatus.CONFLICT, "F409002", "이미 친구 관계이거나 요청이 반대로 존재합니다."),
+
+    FRIEND_SENDER_NOT_FOUND(HttpStatus.NOT_FOUND, "F404001", "요청자 정보 없음"),
+    FRIEND_RECEIVER_NOT_FOUND(HttpStatus.NOT_FOUND, "F404002", "수신자 정보 없음"),
+
+    FRIEND_REQUEST_NOT_FOUND(HttpStatus.NOT_FOUND, "F404003", "요청 정보 없음"),
+    FRIEND_ACCEPT_FORBIDDEN(HttpStatus.FORBIDDEN, "F403001", "해당 요청을 수락할 권한이 없습니다."),
+    FRIEND_REJECT_FORBIDDEN(HttpStatus.FORBIDDEN, "F403002", "해당 요청을 거절할 권한이 없습니다."),
+    FRIEND_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "F403003", "친구 삭제할 권한이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

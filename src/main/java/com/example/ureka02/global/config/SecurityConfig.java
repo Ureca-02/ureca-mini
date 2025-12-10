@@ -63,7 +63,9 @@ public class SecurityConfig {
                                                                 "/auth/kakao/**",
                                                                 "/oauth2/**",
                                                                 "/login/oauth2/**",
-                                                                "/recruitments/**")
+                                                                "/recruitments/**",
+                                                                 "/friends/**"
+                                                )
                                                 .permitAll()
                                                 // 나머지는 인증 필요
                                                 .anyRequest().authenticated())
