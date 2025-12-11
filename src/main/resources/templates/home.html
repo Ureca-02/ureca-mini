@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+    <style>
+
+        .bdy{
+
+            display: flex;
+
+            justify-content: center;
+
+            height: 100vh;
+
+            width: 100%;
+
+        }
+
+        .nav{
+
+            display: flex;
+
+            justify-content: center;
+
+            height: 60px;
+
+            width: 100%;
+
+            border-bottom: 3px solid black;
+
+        }
+
+        .logo{
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            width: 25%;
+
+            font-size: 30px;
+
+            height: 90%;
+
+        }
+
+        .title{
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            width: 50%;
+
+            font-size: 40px;
+
+        }
+
+        .auth{
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            width: 25%;
+
+            gap: 5px;
+
+        }
+
+        .authBox{
+
+            border: 1px solid black;
+
+            padding: 5px;
+
+            border-radius: 10%;
+
+            background-color: rgb(150, 150, 150);
+
+            height: 20px;
+
+
+
+        }
+
+        .content{
+
+            height: 100%;
+
+            max-width: 800px;
+
+            width: 80%;
+
+            border: 3px solid black;
+
+        }
+
+    </style>
+
+</head>
+
+<body class="bdy">
+
+    <div class="content">
+
+        <nav class="nav">
+
+            <div class="logo">logo</div>
+
+            <div class="title">또간집</div>
+
+            <div class="auth">
+			    <!-- 로그인 된 상태 -->
+			    <span sec:authorize="isAuthenticated()">
+			        <a href="/auth/logout" class="authBox">로그아웃</a>
+			    </span>
+			
+			    <!-- 로그인 안 된 상태 -->
+			    <span sec:authorize="isAnonymous()">
+			        <a href="/auth/login" class="authBox">로그인</a>
+			        <a href="/auth/signup" class="authBox">회원가입</a>
+			    </span>
+			</div>
+
+        </nav>
+
+    </div>
+
+</body>
+
+</html>
