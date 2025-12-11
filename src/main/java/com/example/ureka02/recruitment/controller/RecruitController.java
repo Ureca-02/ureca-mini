@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityReturnValueHandler;
 
+import com.example.ureka02.friends.dto.response.FriendResponse;
 import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.recruitment.dto.request.RecruitCreateRequest;
 import com.example.ureka02.recruitment.dto.response.MyAppliedRecruitResponse;
@@ -72,8 +73,7 @@ public class RecruitController {
 
         RecruitDetailResponse response = recruitmentService.createRecruitment(request, creatorId);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseDto.ok(response));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto.ok(response));
     }
 
     // 모집 완료
@@ -87,8 +87,7 @@ public class RecruitController {
 
         RecruitCompletedResponse response = recruitMemberService.completeRecruitment(recruitId, creatorId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.ok(response));
-
+        return ResponseEntity.ok(ResponseDto.ok(response));
     }
 
     // 모집글 상세 조회

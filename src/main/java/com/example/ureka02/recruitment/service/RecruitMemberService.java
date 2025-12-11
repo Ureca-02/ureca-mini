@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.ureka02.global.error.CommonException;
+import com.example.ureka02.global.error.ErrorCode;
 import com.example.ureka02.recruitment.Enum.RecruitApplyStatus;
 import com.example.ureka02.recruitment.Enum.RecruitMemberRole;
 import com.example.ureka02.recruitment.Enum.RecruitStatus;
@@ -43,14 +45,14 @@ public class RecruitMemberService {
                  */
 
                 User creator = userRepository.findById(creatorId)
-                                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
 
                 Recruitment recruitment = recruitRepository.findById(recruitId)
-                                .orElseThrow(() -> new IllegalArgumentException("모집글이 존재하지 않습니다."));
-                // + RuntimeException 대신 CommonException + ErrorCode 로 변경
+                                .orElseThrow(() -> new CommonException(ErrorCode.RECRUITMENT_NOT_FOUND));
 
+                // 권환 확인 (작성자만 모집완료할 수 있음)
                 if (!recruitment.getCreator().getId().equals(creatorId)) {
-                        throw new IllegalStateException("변경 권한이 없습니다.");
+                        throw new CommonException(ErrorCode.RECRUITMENT_ACCESS_DENIED);
                 }
 
                 // 모집 상태를 COMPLETED 로 변경

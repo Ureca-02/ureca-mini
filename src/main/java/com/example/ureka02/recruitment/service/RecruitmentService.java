@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.example.ureka02.global.error.CommonException;
+import com.example.ureka02.global.error.ErrorCode;
 import com.example.ureka02.recruitment.Enum.RecruitApplyStatus;
 import com.example.ureka02.recruitment.dto.request.RecruitCreateRequest;
 import com.example.ureka02.recruitment.dto.response.RecruitApplicationsResponse;
@@ -39,8 +41,7 @@ public class RecruitmentService {
     // 모집글 생성
     public RecruitDetailResponse createRecruitment(RecruitCreateRequest request, Long userId) {
         User creator = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        // + RuntimeException 대신 CommonException + ErrorCode 로 변경
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
 
         Recruitment recruitment = Recruitment.builder()
                 .title(request.getTitle())
@@ -58,7 +59,7 @@ public class RecruitmentService {
     // 모집글 상세 조회
     public RecruitDetailResponse getRecruitDetails(Long recruitId) {
         Recruitment recruitment = recruitmentRepository.findById(recruitId)
-                .orElseThrow(() -> new RuntimeException("모집글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CommonException(ErrorCode.RECRUITMENT_NOT_FOUND));
 
         // 이 모집글에 APPLIED 상태로 신청한 사람들 조회 (신청 시간 순서대로)
         List<RecruitmentApply> applies = recruitApplyRepository.findByRecruitmentIdAndStatusOrderByAppliedAtAsc(
@@ -89,7 +90,6 @@ public class RecruitmentService {
 
     /* 추후에 팩토리 메서드로 리팩토링 예정 */
     // 컨버트 메서드
-
     private RecruitDetailResponse toDetailResponse(Recruitment recruitment,
             List<RecruitApplicationsResponse> applications) {
         return RecruitDetailResponse.builder()
