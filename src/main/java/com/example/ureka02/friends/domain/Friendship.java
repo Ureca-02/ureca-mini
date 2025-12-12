@@ -26,11 +26,11 @@ public class Friendship {
     private Long id;
 
     @JoinColumn(name = "sender_id", nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
 
     @JoinColumn(name = "receiver_id", nullable = false)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User receiver;
 
     @Column(name="status", nullable = false)
