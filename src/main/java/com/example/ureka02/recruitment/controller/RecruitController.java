@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityReturnValueHandler;
 
+import com.example.ureka02.friends.dto.response.FriendResponse;
 import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.recruitment.dto.request.RecruitCreateRequest;
 import com.example.ureka02.recruitment.dto.response.MyAppliedRecruitResponse;
@@ -64,31 +65,26 @@ public class RecruitController {
     @Operation(summary = "선착순 밥친구 모집글 작성", description = "모집자가 인원수와 마감일을 설정하여 모집글을 작성합니다")
     public ResponseEntity<ResponseDto<RecruitDetailResponse>> createRecruiment(
             @RequestBody @Valid RecruitCreateRequest request,
-            // @AuthenticationPrincipal CustomUserDetails principal
-            @RequestParam Long creatorId) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
-        // JWT 토큰에서 userId 추출
-        // Long creatorId = principal.getId();
+        Long creatorId = principal.getId();
 
         RecruitDetailResponse response = recruitmentService.createRecruitment(request, creatorId);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseDto.ok(response));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseDto.ok(response));
     }
 
     // 모집 완료
     @PostMapping("{recruitId}/complete")
     @Operation(summary = "모집 완료 상태로 변경", description = "모집글의 상태를 COMPLETED 로 변경하고 멤버를 생성합니다.")
     public ResponseEntity<ResponseDto<RecruitCompletedResponse>> completeRecruitment(@PathVariable Long recruitId,
-            // @AuthenticationPrincipal CustomUserDetails principal
-            @RequestParam Long creatorId) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
-        // Long creatorId = principal.getId();
+        Long creatorId = principal.getId();
 
         RecruitCompletedResponse response = recruitMemberService.completeRecruitment(recruitId, creatorId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.ok(response));
-
+        return ResponseEntity.ok(ResponseDto.ok(response));
     }
 
     // 모집글 상세 조회
@@ -116,12 +112,11 @@ public class RecruitController {
     @GetMapping("my/posts")
     @Operation(summary = "내가 작성한 모집글 목록", description = "현재 로그인한 사용자가 작성한 모집글을 조회합니다. ")
     public ResponseEntity<ResponseDto<Page<RecruitListItemResponse>>> getMyListRecruitment(
-            // @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestParam Long userId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 크기", example = "5") @RequestParam(defaultValue = "5") int size) {
 
-        // Long userId = principal.getId();
+        Long userId = principal.getId();
 
         Page<RecruitListItemResponse> response = recruitmentService.getMyListItemRecruits(userId, page, size);
 
