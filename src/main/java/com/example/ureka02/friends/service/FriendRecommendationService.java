@@ -23,7 +23,7 @@ public class FriendRecommendationService {
         Set<Long> userFriends =
                 redisTemplate.opsForSet().members(friendKey(userId));
 
-        if (userFriends == null) userFriends = Set.of();
+        if (userFriends == null) userFriends = new HashSet<>();
 
         // Step 2. 친구들의 친구 목록 → 후보군
         Set<Long> candidates = new HashSet<>();

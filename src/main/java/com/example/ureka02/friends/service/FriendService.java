@@ -130,6 +130,10 @@ public class FriendService {
         }
 
         friendRepository.deleteById(reqId);
+
+        redisTemplate.opsForSet().remove(friendKey(request.getReceiverId()), request.getSenderId());
+        redisTemplate.opsForSet().remove(friendKey(request.getSenderId()), request.getReceiverId());
+
         return true;
     }
 
