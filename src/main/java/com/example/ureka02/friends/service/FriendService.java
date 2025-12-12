@@ -2,12 +2,10 @@ package com.example.ureka02.friends.service;
 
 import com.example.ureka02.friends.domain.Friendship;
 import com.example.ureka02.friends.domain.FriendStatus;
-import com.example.ureka02.friends.dto.response.FriendResponse;
+import com.example.ureka02.friends.dto.FriendDto;
 import com.example.ureka02.friends.repository.FriendRepository;
-import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.global.error.CommonException;
 import com.example.ureka02.global.error.ErrorCode;
-import com.example.ureka02.global.error.ExceptionDto;
 import com.example.ureka02.user.User;
 import com.example.ureka02.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -27,15 +25,21 @@ public class FriendService {
     private final RedisTemplate<String, Long>  redisTemplate;
 
     // 1. 친구 요청 보내기
-    public FriendResponse sendFriendRequest(Long senderId, Long receiverId) {
+    public FriendDto sendFriendRequest(Long senderId, String receiverName) {
 
-        if (senderId.equals(receiverId)) {
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        User receiver = userRepository.findByName(receiverName)
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        if (senderId.equals(receiver.getId())) {
             throw new CommonException(ErrorCode.FRIEND_REQUEST_SELF);
         }
 
         // 기존 요청 존재 확인
         Optional<Friendship> existing =
-                friendRepository.findBySender_IdAndReceiver_Id(senderId, receiverId);
+                friendRepository.findBySender_IdAndReceiver_Id(senderId, receiver.getId());
 
         if (existing.isPresent()) {
             throw new CommonException(ErrorCode.FRIEND_REQUEST_ALREADY_EXISTS);
@@ -43,17 +47,11 @@ public class FriendService {
 
         // 반대 방향 요청 또는 이미 친구 여부 확인
         Optional<Friendship> reverse =
-                friendRepository.findBySender_IdAndReceiver_Id(receiverId, senderId);
+                friendRepository.findBySender_IdAndReceiver_Id(receiver.getId(), senderId);
 
         if (reverse.isPresent()) {
             throw new CommonException(ErrorCode.FRIEND_REQUEST_REVERSE_EXISTS);
         }
-
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
-
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
 
         Friendship friendship = Friendship.builder()
                 .sender(sender)
@@ -62,14 +60,14 @@ public class FriendService {
                 .build();
 
         Friendship saved = friendRepository.save(friendship);
-        return new FriendResponse(saved);
+        return new FriendDto(saved);
     }
 
     // 2. 친구 요청 조회 (PENDING)
-    public List<FriendResponse> getAllRequest(Long memberId) {
+    public List<FriendDto> getAllRequest(Long memberId) {
         return friendRepository.findPendingFriendships(memberId)
                 .stream()
-                .map(FriendResponse::new)
+                .map(FriendDto::new)
                 .toList();
     }
 
@@ -112,17 +110,17 @@ public class FriendService {
     }
 
     // 5. 친구 목록 조회
-    public List<FriendResponse> getFriendList(Long userId) {
+    public List<FriendDto> getFriendList(Long userId) {
         return friendRepository.findAcceptedFriendships(userId)
                 .stream()
-                .map(FriendResponse::new)
+                .map(FriendDto::new)
                 .toList();
     }
 
     // 6. 친구 삭제
     public boolean deleteFriend(Long reqId, Long userId) {
-        FriendResponse request = friendRepository.findById(reqId)
-                .map(FriendResponse::new)
+        FriendDto request = friendRepository.findById(reqId)
+                .map(FriendDto::new)
                 .orElseThrow(() -> new CommonException(ErrorCode.FRIEND_REQUEST_NOT_FOUND));
 
         if (!request.getReceiverId().equals(userId)) {

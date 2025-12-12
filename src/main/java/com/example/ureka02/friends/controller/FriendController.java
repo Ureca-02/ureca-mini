@@ -1,14 +1,12 @@
 package com.example.ureka02.friends.controller;
 
-import com.example.ureka02.friends.dto.response.FriendResponse;
+import com.example.ureka02.friends.dto.FriendDto;
 import com.example.ureka02.friends.service.FriendService;
 import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.user.customUserDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,16 +21,15 @@ public class FriendController {
      //1. 친구 요청 보내기
      @Operation(summary = "친구 요청 전송", description = "친구 요청을 보냅니다.")
     @PostMapping("/request")
-    public ResponseDto<FriendResponse> sendFriendRequest(@RequestParam Long receiverId, @AuthenticationPrincipal CustomUserDetails user) {
-
-        FriendResponse response = friendService.sendFriendRequest(user.getId(), receiverId);
+    public ResponseDto<FriendDto> sendFriendRequest(@RequestParam String receiverName, @AuthenticationPrincipal CustomUserDetails user) {
+        FriendDto response = friendService.sendFriendRequest(user.getId(), receiverName);
         return ResponseDto.ok(response);
     }
 
     //2. 내가 받은 친구 요청 조회
-    @Operation(summary = "모든 친구 요청 조회", description = "친구 요청을 조회합니다.")
+    @Operation(summary = "모든 친구 요청 조회", description = "모든 친구 요청을 조회합니다.")
     @GetMapping("/requests")
-    public ResponseDto<List<FriendResponse>> getAllRequests(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseDto<List<FriendDto>> getAllRequests(@AuthenticationPrincipal CustomUserDetails user) {
         return ResponseDto.ok(friendService.getAllRequest(user.getId()));
     }
 
@@ -53,7 +50,7 @@ public class FriendController {
      //5. 친구 목록 조회
      @Operation(summary = "친구 목록 조회", description = "친구 목록을 조회합니다.")
     @GetMapping("/list")
-    public ResponseDto<List<FriendResponse>> getFriendList(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseDto<List<FriendDto>> getFriendList(@AuthenticationPrincipal CustomUserDetails user) {
         return ResponseDto.ok(friendService.getFriendList(user.getId()));
     }
 
