@@ -1,17 +1,23 @@
 package com.example.ureka02.friends.service;
 
 import com.example.ureka02.friends.dto.FriendRecommendDto;
+import com.example.ureka02.user.User;
+import com.example.ureka02.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Member;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FriendRecommendationService {
 
     private final RedisTemplate<String, Long> redisTemplate;
+    private final UserRepository userRepository;
 
     private String friendKey(Long userId) {
         return "friends:" + userId;
@@ -42,14 +48,16 @@ public class FriendRecommendationService {
         // Step 4. 각 후보에 대해 공통 친구 수 측정
         List<FriendRecommendDto> results = new ArrayList<>();
 
-        for (Long c : candidates) {
+        List<User> users = userRepository.findAllById(candidates);
+
+        for (User u : users) {
             // Redis SINTERCARD 사용 (5.x 이상 native 지원, template에서는 직접 SINTER 필요)
             long commonCount = (long) Objects.requireNonNull(redisTemplate.opsForSet()
-                            .intersect(friendKey(userId), friendKey(c)))
+                            .intersect(friendKey(userId), friendKey(u.getId())))
                     .size();
 
             if (commonCount > 0) {
-                results.add(new FriendRecommendDto(c, Math.toIntExact(commonCount)));
+                results.add(new FriendRecommendDto(u.getId(), u.getName(), Math.toIntExact(commonCount)));
             }
         }
 
