@@ -28,47 +28,56 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecruitApplyService {
 
-    private final RecruitRepository recruitRepository;
-    private final RecruitApplyRepository recruitApplyRepository;
-    private final UserRepository userRepository;
-
-    @Transactional
-    public void applyRecruitment(Long recruitmentId, Long userId) {
-        // 동시성 제어 로직 작성
-
-
-        // 사용자 및 유저 정보 체크
-        User applier = userRepository.findById(userId).orElse(()-> new CommonException(ErrorCode.USER_NOT_FOUND));
-        Recruitment recruitment = recruitRepository.findById(recruitmentId)
-                .orElseThrow(() -> new CommonException(ErrorCode.RECRUITMENT_NOT_FOUND));
-
-
-        // 3. 마감 시간 체크
-        LocalDateTime now = LocalDateTime.now();
-        if (recruitment.getEndTime() != null && recruitment.getEndTime().isBefore(now)) {
-            throw new CommonException(ErrorCode.RECRUITMENT_EXPIRED);
-        }
-
-        // 4. 중복 신청 방지
-        boolean alreadyApplied = recruitApplyRepository.existsByRecruitmentIdAndApplierIdAndStatus(recruitmentId, userId, RecruitApplyStatus.APPLIED);
-        if(alreadyApplied){
-            throw new CommonException(ErrorCode.);
-        }
-
-        // 5. 모집 인원 증가
-        recruitment.increaseCurrentSpots();
-
-
-        // 5. 신청 정보 저장
-        RecruitmentApply recruitmentApply = RecruitmentApply.builder().recruitment(recruitment).applier()
-
-    }
-
-    // 내가 신청한 모집리스트 조회
-    /*
-     * public Page<MyAppliedRecruitResponse> getMyAplliedRecruits() {
-     * 
-     * }
-     */
+   /*
+    * private final RecruitRepository recruitRepository;
+    * private final RecruitApplyRepository recruitApplyRepository;
+    * private final UserRepository userRepository;
+    * 
+    * @Transactional
+    * public void applyRecruitment(Long recruitmentId, Long userId) {
+    * // 동시성 제어 로직 작성
+    * 
+    * 
+    * // 사용자 및 유저 정보 체크
+    * User applier = userRepository.findById(userId).orElse(()-> new
+    * CommonException(ErrorCode.USER_NOT_FOUND));
+    * Recruitment recruitment = recruitRepository.findById(recruitmentId)
+    * .orElseThrow(() -> new CommonException(ErrorCode.RECRUITMENT_NOT_FOUND));
+    * 
+    * 
+    * // 3. 마감 시간 체크
+    * LocalDateTime now = LocalDateTime.now();
+    * if (recruitment.getEndTime() != null &&
+    * recruitment.getEndTime().isBefore(now)) {
+    * throw new CommonException(ErrorCode.RECRUITMENT_EXPIRED);
+    * }
+    * 
+    * 
+    * 
+    * // 4. 중복 신청 방지
+    * boolean alreadyApplied =
+    * recruitApplyRepository.existsByRecruitmentIdAndApplierIdAndStatus(
+    * recruitmentId, userId, RecruitApplyStatus.APPLIED);
+    * if(alreadyApplied){
+    * throw new CommonException(ErrorCode.);
+    * }
+    * 
+    * // 5. 모집 인원 증가
+    * recruitment.increaseCurrentSpots();
+    * 
+    * 
+    * // 5. 신청 정보 저장
+    * RecruitmentApply recruitmentApply =
+    * RecruitmentApply.builder().recruitment(recruitment).applier()
+    * 
+    * }
+    * `
+    */
+   // 내가 신청한 모집리스트 조회
+   /*
+    * public Page<MyAppliedRecruitResponse> getMyAplliedRecruits() {
+    * 
+    * }
+    */
 
 }
