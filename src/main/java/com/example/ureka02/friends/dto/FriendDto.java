@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class FriendDto {
     public Long id;
     public Long senderId;
+    public String senderName;
     public Long receiverId;
     public String receiverName;
     public LocalDateTime createdAt;
@@ -16,6 +17,7 @@ public class FriendDto {
     public FriendDto(Friendship friendShip) {
         id = friendShip.getId();
         senderId = friendShip.getSender().getId();
+        senderName = friendShip.getSender().getName();
         receiverId = friendShip.getReceiver().getId();
         receiverName = friendShip.getReceiver().getName();
         createdAt = friendShip.getCreatedAt();
