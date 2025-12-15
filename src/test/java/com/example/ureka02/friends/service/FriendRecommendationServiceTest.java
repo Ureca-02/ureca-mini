@@ -55,8 +55,7 @@ class FriendRecommendServiceTest {
                 .thenReturn(Set.of(2L, 3L)); // 2명
         when(setOps.intersect("friends:1", "friends:5"))
                 .thenReturn(Set.of(3L));     // 1명
-
-        // UserRepository stub (핵심)
+      
         when(userRepository.findAllById(anyIterable()))
                 .thenReturn(List.of(
                         new User(4L, KAKAO, "aaa", "user4", USER, "1234", "1234"),
