@@ -2,54 +2,35 @@ package com.example.ureka02.recruitment.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityReturnValueHandler;
 
-import com.example.ureka02.friends.dto.response.FriendResponse;
 import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.recruitment.dto.request.RecruitCreateRequest;
-import com.example.ureka02.recruitment.dto.response.MyAppliedRecruitResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitCompletedResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitDetailResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitListItemResponse;
-import com.example.ureka02.recruitment.entity.Recruitment;
-import com.example.ureka02.recruitment.service.RecruitApplyService;
 import com.example.ureka02.recruitment.service.RecruitMemberService;
 import com.example.ureka02.recruitment.service.RecruitmentService;
 import com.example.ureka02.user.customUserDetails.CustomUserDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.data.domain.Page;
 
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Authentication;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Tag(name = "Recruit API", description = "밥친구 모집 관련 API")
 @RestController

@@ -1,17 +1,14 @@
 package com.example.ureka02.friends.service;
 
 import com.example.ureka02.friends.domain.*;
-import com.example.ureka02.friends.dto.response.FriendResponse;
+import com.example.ureka02.friends.dto.FriendDto;
 import com.example.ureka02.friends.repository.*;
 import com.example.ureka02.user.User;
 import com.example.ureka02.user.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
-import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.*;
 
 import static com.example.ureka02.user.enums.AuthProvider.KAKAO;
 import static com.example.ureka02.user.enums.Role.USER;
@@ -43,14 +40,14 @@ class FriendServiceTest {
     @Test
     void 친구요청_성공() {
         // when
-        FriendResponse response = friendService.sendFriendRequest(
-                userA.getId(), userB.getId()
+        FriendDto response = friendService.sendFriendRequest(
+                userA.getId(), userB.getName()
         );
 
         // then
         assertThat(response).isNotNull();
         assertThat(response.senderId).isEqualTo(userA.getId());
-        assertThat(response.receiverId).isEqualTo(userB.getId());
+        assertThat(response.receiverName).isEqualTo(userB.getName());
 
         Friendship saved = friendRepository.findById(response.id)
                 .orElseThrow();
@@ -116,7 +113,7 @@ class FriendServiceTest {
 
         // then
         assertThat(list).hasSize(1);
-        assertThat(list.get(0).receiverId).isEqualTo(userB.getId());
+        assertThat(list.get(0).receiverName).isEqualTo(userB.getName());
     }
 
     @Test
