@@ -903,35 +903,41 @@ document.addEventListener("DOMContentLoaded", () => {
       state.home.page = body.data.number ?? page;
 
       const list = body.data.content;
-      if (list.length === 0) {
-        setError("현재 모집 중인 글이 없습니다.");
-        return;
-      }
 
-      contentArea.innerHTML = `
-        <div class="list-header">
-          <h2>밥친구 모집글</h2>
-          <button id="openRecruitFormBtn" class="recruit-btn">모집하기</button>
-        </div>
+	  contentArea.innerHTML = `
+	    <div class="list-header">
+	      <h2>밥친구 모집글</h2>
+	      <button id="openRecruitFormBtn" class="recruit-btn">모집하기</button>
+	    </div>
 
-        <div class="card-container">
-          ${renderRecruitCards(list, { mode: "HOME" })}
-        </div>
-
-        ${renderPagination(body.data)}
-      `;
-	  
+	    ${
+	      list.length === 0
+	        ? `<p class="muted" style="margin-top:12px;">현재 모집 중인 글이 없습니다.</p>`
+	        : `
+	          <div class="card-container">
+	            ${renderRecruitCards(list, { mode: "HOME" })}
+	          </div>
+	          ${renderPagination(body.data)}
+	        `
+	    }
+	  `;
+	  // ✅ 모집하기 버튼 이벤트는 항상 연결
 	  $("#openRecruitFormBtn")?.addEventListener("click", () => {
 	    openCenteredModal(recruitModal);
 	    resetFriendSelectionUI();
 	  });
 
-      $("#prevPageBtn")?.addEventListener("click", () => {
-        if (!body.data.first) loadHomeTeam(state.home.page - 1);
-      });
-      $("#nextPageBtn")?.addEventListener("click", () => {
-        if (!body.data.last) loadHomeTeam(state.home.page + 1);
-      });
+	  // pagination은 있을 때만
+	  if (list.length !== 0) {
+	    $("#prevPageBtn")?.addEventListener("click", () => {
+	      if (!body.data.first) loadHomeTeam(state.home.page - 1);
+	    });
+	    $("#nextPageBtn")?.addEventListener("click", () => {
+	      if (!body.data.last) loadHomeTeam(state.home.page + 1);
+	    });
+
+	    startCountdown();
+	  }
 
       startCountdown();
     } catch (e) {
