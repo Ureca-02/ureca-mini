@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ureka02.global.common.ResponseDto;
 import com.example.ureka02.recruitment.dto.request.RecruitCreateRequest;
+import com.example.ureka02.recruitment.dto.response.RecruitApplyResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitCompletedResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitDetailResponse;
 import com.example.ureka02.recruitment.dto.response.RecruitListItemResponse;
+import com.example.ureka02.recruitment.entity.RecruitmentApply;
 import com.example.ureka02.recruitment.service.RecruitMemberService;
 import com.example.ureka02.recruitment.service.RecruitmentService;
 import com.example.ureka02.user.customUserDetails.CustomUserDetails;
