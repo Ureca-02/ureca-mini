@@ -16,5 +16,5 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: updates #수정
+      ddl-auto: update
     show-sql: true
