@@ -35,7 +35,7 @@ public class BoardController {
     public ResponseDto<BoardResponse> updateBoard(
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long boardId,
-        BoardRequest boardRequest
+        @RequestBody BoardRequest boardRequest
         ){
         return ResponseDto.ok(boardService.updateBoard(boardId,user.getId(), boardRequest));
     }
