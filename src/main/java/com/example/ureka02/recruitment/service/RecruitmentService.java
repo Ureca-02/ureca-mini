@@ -157,6 +157,7 @@ public class RecruitmentService {
             RecruitApplicationsResponse dto = RecruitApplicationsResponse.builder()
                     .userId(user.getId())
                     .name(user.getName())
+                    .appliedAt(apply.getAppliedAt())
                     .order(i + 1) // 1번째, 2번째, 3번째...
                     .build();
 
@@ -177,15 +178,6 @@ public class RecruitmentService {
                 .status(recruitment.getStatus())
                 .createdAt(recruitment.getCreatedAt())
                 .build();
-    }
-
-
-    @Transactional
-    public void completeRecruitment(Long recruitmentId, Integer totalAmount) {
-        Recruitment recruitment = recruitmentRepository.findById(recruitmentId).orElseThrow();
-        recruitment.complete();
-        recruitmentRepository.save(recruitment);
-
     }
 
 }
