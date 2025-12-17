@@ -10,11 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,13 +23,6 @@ public class BoardController {
     @Operation(summary = "게시글 작성")
     public ResponseDto<BoardResponse> createBoard(
         @AuthenticationPrincipal CustomUserDetails user,
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            required = true,
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = BoardRequest.class)
-            )
-        )
         @RequestBody BoardRequest boardRequest
     ) {
         return ResponseDto.ok(
